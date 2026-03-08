@@ -1,27 +1,56 @@
 # DoorknobDetector
-Программная реализация распознования дверных ручек разного типа с помощью предобученной feed-forward модели в рамках проекта по изучения дистанционных сенсоров в качестве обратных связей для управления сервисными и подводными роботами
+DoorknobDetector is a small computer-vision demo that detects door handles in images and webcam video using a pre-trained TensorFlow object-detection model loaded through OpenCV DNN.
 
-Проект: Управление сервисными и подводными роботами с использованием дистанционных сенсоров
-Описание проекта
-Этот проект посвящен исследованию и разработке алгоритмов управления сервисными и подводными роботами с использованием дистанционных сенсоров. В статье рассматриваются особенности применения дистанционных сенсоров в качестве обратных связей для повышения автономности и гибкости мобильных робототехнических комплексов.
+## What the project does
 
-## Цели проекта
- -Повышение автономности и гибкости мобильных роботов.
- - Разработка алгоритмов эффективного управления роботами, учитывающих особенности дистанционных сенсоров и применяемых логических фильтров.
- - Реализация распределенных мехатронных систем.
-## Основные задачи
- - Гармонизация частотных характеристик микропроцессоров, управляющих компьютеров и возможностей сенсоров, включая запаздывания и искажения данных.
- - Разработка алгоритмов управления для захвата тяжелых объектов, находящихся выше центра масс робота.
- - Построение синергий управления приводами манипулятора робота на основе обратных зрительных и ультразвуковых дальнометрических связей.
- - Использование систем технического зрения для целеуказания и навигации роботов.
-Основные компоненты
-- Дистанционные сенсоры: ультразвуковые и ТВ-сенсоры, лидары.
-- Микропроцессоры и управляющие компьютеры: обеспечивают обработку данных от сенсоров и выполнение управляющих алгоритмов.
-- Системы технического зрения: для распознавания маркеров и объектов в рабочей среде робота.
-- Мехатронные системы: приводы и механизмы, обеспечивающие движение и манипуляции роботов.
-Требования
-- Python 3.x
-- Библиотеки для работы с изображениями и обработки данных (OpenCV, NumPy)\
-- Библиотека машинного обучения TensorFlow 2.x
-- Средства для работы с микроконтроллерами (например, Arduino IDE)
+- Loads a frozen inference graph (`frozen_inference_graph.pb`) and graph config (`graph.pbtxt`).
+- Runs object detection on:
+  - a batch of test images from `Input/`
+  - live frames from a webcam
+- Draws bounding boxes around detected door handles and saves processed images to `Output/` (batch mode).
 
+## How it works
+
+1. The model is loaded with `cv2.dnn.readNetFromTensorflow(...)`.
+2. Each frame/image is converted into a blob (`300x300`) with `cv2.dnn.blobFromImage(...)`.
+3. The network outputs detections in `[class, score, box]` format.
+
+## Repository structure
+
+- `Image_test.py` — runs detection on numbered images in `Input/` and writes results to `Output/`.
+- `real_teme_test-с.py` — runs real-time detection from webcam (`Esc` to exit).
+- `frozen_inference_graph.pb`, `graph.pbtxt` — model files.
+- `Input/`, `Output/` — sample input and generated output images.
+
+## Requirements
+
+- Python 3.8+
+- OpenCV with DNN support (`opencv-python`)
+
+
+## Usage
+
+### 1) Batch detection on images
+
+```bash
+python Image_test.py
+```
+
+Expected behavior:
+- reads images like `Input/0.jpg`, `Input/1.jpg`, ...
+- saves processed images to `Output/`
+
+### 2) Real-time webcam detection
+
+```bash
+python real_teme_test-с.py
+```
+
+Expected behavior:
+- opens webcam stream
+- draws detection boxes in real time
+- press `Esc` to close
+
+## Notes
+
+- The scripts assume model files are in the project root.
